@@ -9,3 +9,7 @@ pdfs/
 texts/
 *.faiss
 chunks.pkl
+
+# built by scripts
+indexes/
+results/
