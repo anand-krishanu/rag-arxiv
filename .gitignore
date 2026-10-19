@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.ipynb_checkpoints/
+
+# data that can be recreated by running the scripts
+pdfs/
+texts/
+*.faiss
+chunks.pkl

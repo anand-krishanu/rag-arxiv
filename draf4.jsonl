@@ -1,0 +1,15 @@
+{"paper_id": "2411.17089v2", "page": 12, "question": "What is the maximum throughput improvement of KVPR over FlexGen for OPT-6.7B on a low-end GPU system?", "answer": "15%", "type": "", "keep": null}
+{"paper_id": "2606.03928v1", "page": 1, "question": "By what percentage does VASE outperform R-KV on Qwen3-4B?", "answer": "4.4%", "type": "", "keep": null}
+{"paper_id": "2603.21576v2", "page": 3, "question": "What percentage of heads does DuoAttention identify as retrieval heads for GQA?", "answer": "50%", "type": "", "keep": null}
+{"paper_id": "2405.14366v2", "page": 0, "question": "What is the maximum compression ratio achieved by MiniCache with LLaMA-2-7B on the ShareGPT dataset?", "answer": "5.02\u00d7", "type": "", "keep": null}
+{"paper_id": "2506.09501v2", "page": 15, "question": "What was the approximate accuracy of Qwen2.5-7B-Instruct on the MATH500 task under BFloat16?", "answer": "0.9", "type": "", "keep": null}
+{"paper_id": "2606.11196v1", "page": 5, "question": "What is the approximate number of parameters for the TextCNN Judge architecture?", "answer": "\u223c10M parameters", "type": "", "keep": null}
+{"paper_id": "2512.06727v1", "page": 6, "question": "What is the memory savings for GPT-2 on Wikitext when using autoencoder-based KV compression?", "answer": "41.6%", "type": "", "keep": null}
+{"paper_id": "2607.01520v1", "page": 27, "question": "What value does centering give for Att(0 | PN)?", "answer": "0", "type": "", "keep": null}
+{"paper_id": "2605.03379v2", "page": 5, "question": "What does the method of Projected Wald two-call regions combine?", "answer": "It combines the structural uncertainty caused by observing only two calls per example with the ordinary sampling uncertainty caused by observing only finitely many examples.", "type": "", "keep": null}
+{"paper_id": "2312.11462v5", "page": 14, "question": "What is the result of applying operator T\u03b1 to \u03d5n(x)?", "answer": "The result is 1\u2212\u03b1\u03d5n(\u03b1) / (1\u2212\u03b1) for the expected number of accepted tokens.", "type": "", "keep": null}
+{"paper_id": "2606.11196v1", "page": 12, "question": "What is the Pearson correlation achieved by the DeBERTa judge?", "answer": "0.747", "type": "", "keep": null}
+{"paper_id": "2305.13144v2", "page": 12, "question": "What was the impact of FlexGen\u2019s quantization method on performance?", "answer": "It had minimal impact on performance.", "type": "", "keep": null}
+{"paper_id": "2511.16786v2", "page": 14, "question": "What is the parameter count of Qwen2.5-VL-7B-Instruct?", "answer": "7 billion", "type": "", "keep": null}
+{"paper_id": "2501.00032v1", "page": 10, "question": "How many centroids does each codebook have in the codebook-based quantization scheme?", "answer": "Four.", "type": "", "keep": null}
+{"paper_id": "2604.04013v1", "page": 7, "question": "What is the approximate time RUQuant takes to compress the 13B model?", "answer": "68 seconds", "type": "", "keep": null}
