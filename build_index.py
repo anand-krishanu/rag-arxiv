@@ -2,7 +2,7 @@ import argparse, json, os, pickle
 import faiss
 from sentence_transformers import SentenceTransformer
 
-MODEL_NAME = "BAAI/bge-small-en-v1.5"
+MODEL_NAME = "BAAI/bge-base-en-v1.5"
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--words", type=int, default=200, help="words per chunk")

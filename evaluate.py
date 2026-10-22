@@ -1,4 +1,4 @@
-import argparse, json, os
+import argparse, json, os, time
 from collections import defaultdict
 from metrics import first_hit_rank, recall_at_k, mrr, all_gold_in_top_k
 from search import Searcher
@@ -6,7 +6,9 @@ from search import Searcher
 KS = [1, 3, 5, 10]
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--method", default="dense", choices=["dense", "bm25", "hybrid"])
+ap.add_argument("--method", default="dense",
+                choices=["dense", "bm25", "hybrid", "bm25_rerank", "hybrid_rerank", "dense_rerank"])
+ap.add_argument("--rerank-pool", type=int, default=30, help="how many first-stage results the reranker re-sorts")
 ap.add_argument("--words", type=int, default=200)
 ap.add_argument("--overlap", type=int, default=50)
 ap.add_argument("--testset", default="testset.jsonl")
@@ -26,7 +28,12 @@ print(f"{len(questions)} questions ({'FINAL' if args.final else 'dev'} set), met
 
 # --- search
 searcher = Searcher(args.words, args.overlap)
-retrieved = searcher.search([q["question"] for q in questions], method=args.method, k=max(KS))
+searcher.search(["warm up"], method=args.method, k=max(KS), rerank_pool=args.rerank_pool)  # load models first
+t0 = time.time()
+retrieved = searcher.search([q["question"] for q in questions], method=args.method, k=max(KS),
+                            rerank_pool=args.rerank_pool)
+latency_ms = (time.time() - t0) / len(questions) * 1000
+print(f"average search time: {latency_ms:.0f} ms per query")
 
 # --- score (page level: right paper + right page +-1; paper level: right paper only)
 results = []
@@ -70,5 +77,8 @@ for r in wrong_paper[: args.show]:
     print(f"    gold: {g['paper_id']} p{g['page'] + 1}   top result: {top['paper_id']} p{top['page'] + 1}")
 
 os.makedirs("results", exist_ok=True)
-out = [{"id": r["q"]["id"], "type": r["q"]["type"], "rank": r["rank"], "paper_rank": r["paper_rank"]} for r in results]
-json.dump(out, open(f"results/{args.method}_{args.words}_{args.overlap}.json", "w"), indent=1)
+out = {"method": args.method, "latency_ms": round(latency_ms),
+       "results": [{"id": r["q"]["id"], "type": r["q"]["type"], "rank": r["rank"], "paper_rank": r["paper_rank"]}
+                   for r in results]}
+suffix = f"_pool{args.rerank_pool}" if args.method.endswith("_rerank") else ""
+json.dump(out, open(f"results/{args.method}{suffix}_{args.words}_{args.overlap}.json", "w"), indent=1)

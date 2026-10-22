@@ -4,9 +4,10 @@ from collections import defaultdict
 import faiss
 import numpy as np
 from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import CrossEncoder, SentenceTransformer
 
-MODEL_NAME = "BAAI/bge-small-en-v1.5"
+MODEL_NAME = "BAAI/bge-base-en-v1.5"
+RERANK_MODEL = "BAAI/bge-reranker-base"
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 
@@ -22,6 +23,13 @@ class Searcher:
         self.chunks = pickle.load(open(f"indexes/{tag}.pkl", "rb"))
         self.model = SentenceTransformer(MODEL_NAME, device="cuda")
         self._bm25 = None
+        self._reranker = None
+
+    @property
+    def reranker(self):
+        if self._reranker is None:
+            self._reranker = CrossEncoder(RERANK_MODEL, device="cuda", max_length=512)
+        return self._reranker
 
     @property
     def bm25(self):
@@ -41,8 +49,21 @@ class Searcher:
             out.append(list(np.argsort(-scores)[:k]))
         return out
 
-    def search(self, queries, method="dense", k=10, pool=50):
-        """Returns, for each query, a ranked list of chunk dicts."""
+    def rerank(self, queries, candidate_lists, k):
+        """Score every (query, chunk) pair with a cross-encoder and keep the best k."""
+        out = []
+        for q, cands in zip(queries, candidate_lists):
+            scores = self.reranker.predict([(q, c["text"]) for c in cands], batch_size=16)
+            order = np.argsort(-scores)[:k]
+            out.append([cands[i] for i in order])
+        return out
+
+    def search(self, queries, method="dense", k=10, pool=50, rerank_pool=30):
+        """Returns, for each query, a ranked list of chunk dicts.
+        method: dense | bm25 | hybrid, optionally with '_rerank' (e.g. bm25_rerank)."""
+        if method.endswith("_rerank"):
+            first_stage = self.search(queries, method[: -len("_rerank")], k=rerank_pool, pool=pool)
+            return self.rerank(queries, first_stage, k)
         if method == "dense":
             ids = self.dense_ids(queries, k)
         elif method == "bm25":
